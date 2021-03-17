@@ -40,6 +40,17 @@ form {
   display: flex;
   flex: 1;
 }
+.book--content--finished-container {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-top: 1rem;
+  padding-right: 1rem;
+}
+
+.book--content--is-finished-icon {
+  margin-right: 0.5rem;
+}
 
 .book--content--cover {
   margin-right: $spacing-xxs;

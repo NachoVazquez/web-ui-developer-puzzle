@@ -1,10 +1,12 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store';
+import { ReadingListItem } from '@tmo/shared/models';
 import {
   BOOKS_FEATURE_KEY,
   booksAdapter,
   BooksPartialState,
-  State
+  State,
 } from './books.reducer';
+import { getReadingList } from './reading-list.selectors';
 
 export const getBooksState = createFeatureSelector<BooksPartialState, State>(
   BOOKS_FEATURE_KEY
@@ -23,3 +25,5 @@ export const getBooksError = createSelector(
 );
 
 export const getBooks = createSelector(getBooksState, selectAll);
+
+
