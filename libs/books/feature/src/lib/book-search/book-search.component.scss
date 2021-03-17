@@ -20,6 +20,14 @@ form {
   margin: 2px;
   padding: $spacing-xxs;
   background-color: $gray10;
+
+  &:hover {
+    border: 1px solid $pink-dark;
+  }
+
+  &:focus {
+    border: 1px solid $pink-very-dark;
+  }
 }
 
 .book--title {
@@ -69,4 +77,18 @@ form {
   min-height: 50vh;
   font-size: 1.5rem;
   color: $gray40;
+}
+
+.try-search-text__accesible {
+  color: $gray80;
+}
+
+.link-like {
+  font-size: inherit;
+  cursor: pointer;
+  color: $pink-accent;
+
+  &:hover {
+    color: $pink-dark;
+  }
 }

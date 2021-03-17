@@ -1,5 +1,8 @@
 <ng-container *ngIf="(readingList$ | async).length > 0; else empty">
-  <div class="reading-list-item" *ngFor="let b of readingList$ | async">
+  <div
+    class="reading-list-item"
+    *ngFor="let b of readingList$ | async; trackBy: trackByBookId"
+  >
     <div>
       <img class="reading-list-item--cover" [src]="b.coverUrl" />
     </div>

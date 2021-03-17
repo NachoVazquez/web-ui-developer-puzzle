@@ -22,7 +22,8 @@
       "@tmo/books/data-access": ["libs/books/data-access/src/index.ts"],
       "@tmo/shared/storage": ["libs/shared/storage/src/index.ts"],
       "@tmo/shared/testing": ["libs/shared/testing/src/index.ts"],
-      "@tmo/api/books": ["libs/api/books/src/index.ts"]
+      "@tmo/api/books": ["libs/api/books/src/index.ts"],
+      "@tmo/shared/utils": ["libs/shared/utils/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
