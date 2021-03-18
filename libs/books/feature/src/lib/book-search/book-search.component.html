@@ -38,6 +38,7 @@
             <p tabindex="0" [innerHTML]="b.description"></p>
             <div>
               <button
+                *ngIf="!b.finished"
                 mat-flat-button
                 color="primary"
                 (click)="addBookToReadingList(b)"
@@ -45,6 +46,19 @@
               >
                 Want to Read
               </button>
+              <div
+                data-testing="finished-book-indicator"
+                class="book--content--finished-container"
+                *ngIf="b.finished"
+              >
+                <mat-icon
+                  class="book--content--is-finished-icon"
+                  aria-hidden="false"
+                  [attr.aria-label]="b.title + ' Finished'"
+                  >done</mat-icon
+                >
+                <strong class="book--content--finish-state">Finished</strong>
+              </div>
             </div>
           </div>
         </div>

@@ -13,19 +13,47 @@ export class ReadingListService {
   }
 
   async addBook(b: Book): Promise<void> {
-    this.storage.update(list => {
+    this.storage.update((list) => {
       const { id, ...rest } = b;
       list.push({
         bookId: id,
-        ...rest
+        ...rest,
       });
       return list;
     });
   }
 
   async removeBook(id: string): Promise<void> {
-    this.storage.update(list => {
-      return list.filter(x => x.bookId !== id);
+    this.storage.update((list) => {
+      return list.filter((x) => x.bookId !== id);
     });
   }
+
+  async markBookAsFinished(id: string): Promise<ReadingListItem> {
+    let updateItem: ReadingListItem;
+    this.storage.update((list) => {
+      const foundItem = this.findItemById(list, id);
+      const itemIndex = this.findIndexOfItemById(list, id);
+
+      if (foundItem) {
+        const completedItem: ReadingListItem = {
+          ...foundItem,
+          finished: true,
+          finishedDate: new Date().toISOString(),
+        };
+        list.splice(itemIndex, 1, completedItem);
+        updateItem = completedItem;
+        return list;
+      }
+
+      return list;
+    });
+
+    return updateItem;
+  }
+  private findItemById = (list: ReadingListItem[], id: string) =>
+    list.find((item) => item.bookId === id);
+
+  private findIndexOfItemById = (list: ReadingListItem[], id: string) =>
+    list.findIndex((item) => item.bookId === id);
 }

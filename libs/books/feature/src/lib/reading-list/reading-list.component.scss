@@ -12,6 +12,7 @@
   display: flex;
   justify-content: center;
   margin-bottom: $spacing-xs;
+  flex-wrap: wrap;
   width: 100%;
 
   > * {
@@ -19,6 +20,15 @@
     flex-direction: column;
     justify-content: center;
   }
+}
+
+.reading-list-item--is-finish {
+  margin-right: 0.5rem;
+}
+
+.reading-list-item--is-finished-icon {
+  margin: auto 0;
+  margin-right: 0.5rem;
 }
 
 .reading-list-item--cover {
@@ -34,10 +44,15 @@
 }
 
 .reading-list-item--details--title,
-.reading-list-item--details--author {
+.reading-list-item--details--author,
+.reading-list-item--details--finished-date {
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
+}
+
+.reading-list-item--details--finished-date {
+  margin: 0;
 }
 
 .empty {

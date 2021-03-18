@@ -3,6 +3,23 @@
     class="reading-list-item"
     *ngFor="let b of readingList$ | async; trackBy: trackByBookId"
   >
+    <mat-checkbox
+      data-testing="check-finished-reading-item"
+      *ngIf="!b.finished"
+      [checked]="b.finished"
+      (change)="finishTheBook(b)"
+      class="reading-list-item--is-finish"
+      [attr.aria-label]="'Finish reading ' + b.title"
+    >
+    </mat-checkbox>
+    <mat-icon
+      data-testing="finished-reading-item-icon"
+      *ngIf="b.finished"
+      class="reading-list-item--is-finished-icon"
+      aria-hidden="false"
+      [attr.aria-label]="b.title + ' Finished'"
+      >done</mat-icon
+    >
     <div>
       <img class="reading-list-item--cover" [src]="b.coverUrl" />
     </div>
@@ -11,9 +28,19 @@
       <div class="reading-list-item--details--author">
         {{ b.authors.join(',') }}
       </div>
+      <p
+        data-testing="finished-date-reading-item"
+        class="reading-list-item--details--finished-date"
+        *ngIf="b.finishedDate"
+      >
+        <strong>Finished at: </strong>
+
+        {{ b.finishedDate | date }}
+      </p>
     </div>
     <div>
       <button
+        data-testing="remove-reading-item"
         mat-icon-button
         color="warn"
         [attr.aria-label]="'Remove ' + b.title + ' from reading list'"
