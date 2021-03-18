@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
 import { Store } from '@ngrx/store';
 import {
   addToReadingList,
@@ -7,10 +12,17 @@ import {
   ReadingListBook,
   searchBooks,
 } from '@tmo/books/data-access';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, FormControl } from '@angular/forms';
 import { Book } from '@tmo/shared/models';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable, Subject } from 'rxjs';
 import { trackByField } from '@tmo/shared/utils';
+import {
+  debounceTime,
+  distinctUntilChanged,
+  map,
+  startWith,
+  takeUntil,
+} from 'rxjs/operators';
 
 @Component({
   selector: 'tmo-book-search',
@@ -18,13 +30,21 @@ import { trackByField } from '@tmo/shared/utils';
   styleUrls: ['./book-search.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class BookSearchComponent implements OnInit {
+export class BookSearchComponent implements OnInit, OnDestroy {
   trackById = trackByField();
+
+  onDestroy$ = new Subject<void>();
+
+  submit$ = new BehaviorSubject<void>(null);
 
   constructor(
     private readonly store: Store,
     private readonly fb: FormBuilder
   ) {}
+
+  get searchTermControl(): FormControl {
+    return this.searchForm.get('term') as FormControl;
+  }
 
   get searchTerm(): string {
     return this.searchForm.value.term;
@@ -37,6 +57,19 @@ export class BookSearchComponent implements OnInit {
 
   ngOnInit(): void {
     this.books$ = this.store.select(getAllBooks);
+
+    combineLatest([this.searchTermControl.valueChanges, this.submit$])
+      .pipe(
+        map(([term]) => term),
+        debounceTime(500),
+        distinctUntilChanged(),
+        takeUntil(this.onDestroy$)
+      )
+      .subscribe({
+        next: (searchTerm) => {
+          this.searchBooks(searchTerm);
+        },
+      });
   }
 
   addBookToReadingList(book: Book) {
@@ -44,15 +77,25 @@ export class BookSearchComponent implements OnInit {
   }
 
   searchExample() {
-    this.searchForm.controls.term.setValue('javascript');
-    this.searchBooks();
+    const exampleTerm = 'javascript';
+    this.searchForm.controls.term.setValue(exampleTerm);
   }
 
-  searchBooks() {
-    if (this.searchForm.value.term) {
-      this.store.dispatch(searchBooks({ term: this.searchTerm }));
+  forceSearchBooks(): void {
+    this.submit$.next();
+  }
+
+  searchBooks(searchTerm = '') {
+    if (searchTerm) {
+      this.store.dispatch(searchBooks({ term: searchTerm }));
     } else {
       this.store.dispatch(clearSearch());
     }
+  }
+
+  ngOnDestroy(): void {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
+    this.submit$.complete();
   }
 }
