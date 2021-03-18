@@ -1,55 +1,67 @@
-<form [formGroup]="searchForm" (submit)="searchBooks()">
+<form role="search" [formGroup]="searchForm" (submit)="searchBooks()">
   <mat-form-field floatLabel="never">
     <input
+      aria-labelledby="searchbutton"
       autoFocus
       matInput
       type="search"
+      name="search"
       placeholder="Search for books to add to your reading list"
       formControlName="term"
     />
-    <button mat-icon-button matSuffix>
+    <button id="searchbutton" aria-label="search" mat-icon-button matSuffix>
       <mat-icon>search</mat-icon>
     </button>
   </mat-form-field>
 </form>
 
 <ng-container *ngIf="searchTerm; else empty">
-  <div class="book-grid">
-    <div class="book" data-testing="book-item" *ngFor="let b of books">
-      <div class="book--title">
-        {{ b.title }}
-      </div>
-      <div class="book--content">
-        <div class="book--content--cover">
-          <img src="{{ b.coverUrl }}" />
-        </div>
-        <div class="book--content--info">
-          <div><strong>Author:</strong> {{ b.authors.join(',') }}</div>
-          <div><strong>Publisher:</strong> {{ b.publisher }}</div>
-          <div>
-            <strong>Published:</strong> {{ formatDate(b.publishedDate) }}
+  <ul tabindex="-1" class="book-grid">
+    <li *ngFor="let b of books$ | async; trackBy: trackById">
+      <article class="book" tabindex="0" data-testing="book-item">
+        <h2 class="book--title">
+          {{ b.title }}
+        </h2>
+        <div class="book--content">
+          <div class="book--content--cover">
+            <img src="{{ b.coverUrl }}" alt="" />
           </div>
-          <p [innerHTML]="b.description"></p>
-          <div>
-            <button
-              mat-flat-button
-              color="primary"
-              (click)="addBookToReadingList(b)"
-              [disabled]="b.isAdded"
-            >
-              Want to Read
-            </button>
+          <div class="book--content--info">
+            <p tabindex="0">
+              <strong>Author:</strong> {{ b.authors.join(',') }}
+            </p>
+            <p tabindex="0"><strong>Publisher:</strong> {{ b.publisher }}</p>
+            <p tabindex="0">
+              <strong>Published:</strong>
+              {{ b.publishedDate | date: 'M/d/yyyy' }}
+            </p>
+            <p tabindex="0" [innerHTML]="b.description"></p>
+            <div>
+              <button
+                mat-flat-button
+                color="primary"
+                (click)="addBookToReadingList(b)"
+                [disabled]="b.isAdded"
+              >
+                Want to Read
+              </button>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
-  </div>
+      </article>
+    </li>
+  </ul>
 </ng-container>
 <ng-template #empty>
   <div class="empty">
-    <p>
-      Try searching for a topic, for example "<a (click)="searchExample()"
-        >JavaScript</a
+    <p class="try-search-text__accesible">
+      Try searching for a topic, for example "<button
+        class="link-like"
+        aria-label="Use default search text"
+        mat-button
+        (click)="searchExample()"
+      >
+        JavaScript</button
       >".
     </p>
   </div>

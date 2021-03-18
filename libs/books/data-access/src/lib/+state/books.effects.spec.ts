@@ -19,20 +19,20 @@ describe('BooksEffects', () => {
       providers: [
         BooksEffects,
         provideMockActions(() => actions),
-        provideMockStore()
-      ]
+        provideMockStore(),
+      ],
     });
 
     effects = TestBed.inject(BooksEffects);
     httpMock = TestBed.inject(HttpTestingController);
   });
 
-  describe('loadBooks$', () => {
-    it('should work', done => {
+  describe('searchBooks$', () => {
+    it('should dispatch a searchBookSuccess action when the search http call succeeds', (done) => {
       actions = new ReplaySubject();
       actions.next(BooksActions.searchBooks({ term: '' }));
 
-      effects.searchBooks$.subscribe(action => {
+      effects.searchBooks$.subscribe((action) => {
         expect(action).toEqual(
           BooksActions.searchBooksSuccess({ books: [createBook('A')] })
         );
@@ -40,6 +40,24 @@ describe('BooksEffects', () => {
       });
 
       httpMock.expectOne('/api/books/search?q=').flush([createBook('A')]);
+    });
+
+    it('should dispatch a searchBookFailure action when the search http call fails', (done) => {
+      actions = new ReplaySubject();
+      actions.next(BooksActions.searchBooks({ term: '' }));
+
+      effects.searchBooks$.subscribe((action) => {
+        expect(action).toEqual(
+          BooksActions.searchBooksFailure({ error: expect.any(Object) })
+        );
+        expect((action as any).error.message).toContain('Service Unavailable');
+        done();
+      });
+
+      httpMock.expectOne('/api/books/search?q=').flush('Service Unavailable', {
+        status: 503,
+        statusText: 'Service Unavailable',
+      });
     });
   });
 });

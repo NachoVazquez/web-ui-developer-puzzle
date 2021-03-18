@@ -53,6 +53,9 @@
     },
     "api-books": {
       "tags": []
+    },
+    "shared-utils": {
+      "tags": ["type:utils", "scope:shared"]
     }
   },
   "affected": {
